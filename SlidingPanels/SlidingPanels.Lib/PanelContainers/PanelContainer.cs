@@ -140,17 +140,31 @@ namespace SlidingPanels.Lib.PanelContainers
         {
             CGRect frame = UIScreen.MainScreen.Bounds;
 
-            if (InterfaceOrientation != UIInterfaceOrientation.Portrait) {
-                frame.Width = UIScreen.MainScreen.Bounds.Height;
-                frame.Height = UIScreen.MainScreen.ApplicationFrame.Width;
-                frame.X = UIScreen.MainScreen.ApplicationFrame.Y;
+            if (InterfaceOrientation != UIInterfaceOrientation.Portrait && InterfaceOrientation != UIInterfaceOrientation.PortraitUpsideDown) {
 
-                if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft) {
+                frame.Width = UIScreen.MainScreen.Bounds.Height;
+                /*
+                 * Hier muss unterschieden werden, da ApplicationFrame.Width 
+                 * und .Height bei iOS7 und 8 unterschiedlich gehandhabt werden
+                */
+                if (UIDevice.CurrentDevice.CheckSystemVersion(8, 0))
+                {
+                    frame.Height = UIScreen.MainScreen.ApplicationFrame.Width;
+                }
+                else
+                {
+                    frame.Height = UIScreen.MainScreen.ApplicationFrame.Height;
+                }
+
+                if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft) 
+                {
                     frame.Y = UIScreen.MainScreen.ApplicationFrame.X;
-                } else {
+                } 
+                else 
+                {
                     frame.Y = UIScreen.MainScreen.Bounds.Width - UIScreen.MainScreen.ApplicationFrame.Width;
                 }
-                //TESTCOMMIT
+
             }
 
             View.Frame = frame;
