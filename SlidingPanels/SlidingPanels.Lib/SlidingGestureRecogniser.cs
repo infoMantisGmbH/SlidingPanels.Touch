@@ -102,6 +102,7 @@ namespace SlidingPanels.Lib
 
 				bool validTouch = false;
 				UIView touchView = touch.View;
+
 				while (touchView != null)
 				{
 					if (touchView == contentView)
@@ -123,6 +124,19 @@ namespace SlidingPanels.Lib
 		#endregion
 
 		#region Touch Methods
+
+        private void SlidingStarted(CGPoint touchPt) 
+        {
+            if (CurrentActivePanelContainer is LeftOverlappingPanelContainer)
+            {
+                CurrentActivePanelContainer.SlidingStarted (touchPt, CurrentActivePanelContainer.PanelVC.View.Frame);
+            }
+            else
+            {
+                CurrentActivePanelContainer.SlidingStarted (touchPt, SlidingController.View.Frame);
+            }
+
+        }
 
 		/// <summary>
 		/// We want to prevent any other gesture to be recognized on the window!
@@ -161,7 +175,7 @@ namespace SlidingPanels.Lib
 				if (CurrentActivePanelContainer != null) 
 				{
 					CurrentActivePanelContainer.Show ();
-					CurrentActivePanelContainer.SlidingStarted (touchPt, SlidingController.View.Frame);
+                    SlidingStarted(touchPt);
 				}
 				else
 				{
@@ -170,7 +184,7 @@ namespace SlidingPanels.Lib
 			} 
 			else 
 			{
-				CurrentActivePanelContainer.SlidingStarted (touchPt, SlidingController.View.Frame);
+                SlidingStarted(touchPt);
 			}
 		}
 
@@ -199,8 +213,19 @@ namespace SlidingPanels.Lib
 				return;
 			}
 
-			CGRect newFrame = CurrentActivePanelContainer.Sliding (touchPt, SlidingController.View.Frame);
-			SlidingController.View.Frame = newFrame;
+            if (CurrentActivePanelContainer is LeftOverlappingPanelContainer)
+            {
+                // NavigationListe verschieben
+                CGRect newFrame = CurrentActivePanelContainer.Sliding (touchPt, CurrentActivePanelContainer.PanelVC.View.Frame);
+                CurrentActivePanelContainer.PanelVC.View.Frame = newFrame;
+
+            }
+            else
+            {
+                // HauptView verschieben
+                CGRect newFrame = CurrentActivePanelContainer.Sliding (touchPt, SlidingController.View.Frame);
+                SlidingController.View.Frame = newFrame;    
+            }
 		}
 
 		/// <summary>
@@ -208,7 +233,7 @@ namespace SlidingPanels.Lib
 		/// </summary>
 		/// <param name="touches">Touches.</param>
 		/// <param name="evt">Evt.</param>
-		public override void TouchesEnded (Foundation.NSSet touches, UIEvent evt)
+		public override async void TouchesEnded (Foundation.NSSet touches, UIEvent evt)
 		{
 			base.TouchesEnded (touches, evt);
 
@@ -228,10 +253,12 @@ namespace SlidingPanels.Lib
 				return;
 			}
 
-			if (CurrentActivePanelContainer.SlidingEnded (touchPt, SlidingController.View.Frame)) 
+            var frame = (CurrentActivePanelContainer is LeftOverlappingPanelContainer) ? CurrentActivePanelContainer.PanelVC.View.Frame : SlidingController.View.Frame;
+
+			if (CurrentActivePanelContainer.SlidingEnded (touchPt, frame)) 
 			{
 				if (ShowPanel != null) 
-				{
+                {
 					ShowPanel (this, new SlidingGestureEventArgs (CurrentActivePanelContainer));
 				}
 			} 

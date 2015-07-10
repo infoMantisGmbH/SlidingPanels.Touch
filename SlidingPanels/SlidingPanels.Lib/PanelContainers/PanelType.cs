@@ -29,6 +29,7 @@ namespace SlidingPanels.Lib.PanelContainers
 	public enum PanelType 
 	{
 		LeftPanel, 
+        OverlappingLeftPanel,
 		RightPanel, 
 		BottomPanel
 	}

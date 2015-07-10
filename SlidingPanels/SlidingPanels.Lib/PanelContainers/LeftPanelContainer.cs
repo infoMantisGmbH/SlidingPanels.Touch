@@ -46,7 +46,7 @@ namespace SlidingPanels.Lib.PanelContainers
 		/// Gets the panel position.
 		/// </summary>
 		/// <value>The panel position.</value>
-		public CGRect PanelPosition
+		public virtual CGRect PanelPosition
 		{
 			get
 			{

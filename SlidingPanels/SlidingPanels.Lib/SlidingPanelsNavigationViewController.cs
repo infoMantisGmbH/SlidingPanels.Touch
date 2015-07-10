@@ -40,6 +40,8 @@ namespace SlidingPanels.Lib
         /// </summary>
         private const float AnimationSpeed = 0.25f;
 
+        private UIView _maskingView;
+
         #endregion
 
         #region Data Members
@@ -85,6 +87,7 @@ namespace SlidingPanels.Lib
 
         public float ShadowOpacity { get { return View.Layer.ShadowOpacity; } set { View.Layer.ShadowOpacity = value; } }
 
+        public bool OverlappingMainView { get; set; }
         /// <summary>
         ///     This is a handy Accessor to get the currently active panel, if any.
         /// </summary>
@@ -111,7 +114,7 @@ namespace SlidingPanels.Lib
 
 			ShadowColor = UIColor.Black.CGColor;
 			ShadowOpacity = .75f;
-
+            OverlappingMainView = false;
         }
 
         #endregion
@@ -128,9 +131,9 @@ namespace SlidingPanels.Lib
             _panelContainers = new List<PanelContainer>();
 
             _tapToClose = new UITapGestureRecognizer();
-            _tapToClose.AddTarget(() => HidePanel(CurrentActivePanelContainer));
+            _tapToClose.AddTarget(CheckIfClosePanel);
 
-			_slidingGesture = new SlidingGestureRecogniser(_panelContainers, ShouldReceiveTouch, this, View);
+            _slidingGesture = new SlidingGestureRecogniser(_panelContainers, ShouldReceiveTouch, this, View);
 
             _slidingGesture.ShowPanel += (sender, e) => ShowPanel(((SlidingGestureEventArgs) e).PanelContainer);
 
@@ -183,6 +186,14 @@ namespace SlidingPanels.Lib
 
 				View.Superview.BringSubviewToFront (View);
 
+                // Der Überlappende Container muss ganz vorne sein, um die Gesture-Events zu bekommen
+                var overlappingContainer = _panelContainers.OfType<LeftOverlappingPanelContainer>().FirstOrDefault();
+
+                if (overlappingContainer != null)
+                {
+                    View.Superview.BringSubviewToFront(overlappingContainer.View);
+                }
+
                 _firstTime = false;
             }
         }
@@ -214,6 +225,16 @@ namespace SlidingPanels.Lib
 
         #endregion
 
+        #endregion
+
+        #region Event-Handler
+        private void CheckIfClosePanel() 
+        {
+            if (!(CurrentActivePanelContainer is LeftOverlappingPanelContainer))
+            {
+                HidePanel(CurrentActivePanelContainer);
+            }
+        }
         #endregion
 
         #region Panel stuff
@@ -302,13 +323,45 @@ namespace SlidingPanels.Lib
 			container.ViewWillAppear (true);
 			container.Show ();
 
-        	UIView.Animate(AnimationSpeed, 0, UIViewAnimationOptions.CurveEaseInOut,
-            delegate { View.Frame = container.GetTopViewPositionWhenSliderIsVisible(View.Frame); },
-            delegate
+            if (OverlappingMainView)
             {
-                View.AddGestureRecognizer(_tapToClose);
-                container.ViewDidAppear(true);
-            });
+                UIView.Animate(AnimationSpeed, 0, UIViewAnimationOptions.CurveEaseInOut,
+                    delegate 
+                    { 
+                        var frame = container.PanelVC.View.Frame;
+                        container.PanelVC.View.Frame = new CGRect(0,frame.Y,frame.Width,frame.Height);
+                    },
+                    delegate
+                    {
+                        if (_maskingView == null)
+                        {
+                            var bounds = UIScreen.MainScreen.Bounds;
+                            _maskingView = new UIView(new CGRect(0,container.View.Frame.Y,bounds.Width,bounds.Height));
+                            _maskingView.BackgroundColor = UIColor.FromRGB(0,0,0);
+                            _maskingView.Layer.Opacity = 0.6f;
+                            _maskingView.Tag = -2;
+                        }
+                        // View Abdunkeln
+                        View.AddSubview(_maskingView);
+                        View.AddGestureRecognizer(_tapToClose);
+                        container.ViewDidAppear(true);
+                    });
+            }
+            else
+            {
+                // alter Presenter
+                UIView.Animate(AnimationSpeed, 0, UIViewAnimationOptions.CurveEaseInOut,
+                    delegate 
+                    { 
+                        View.Frame = container.GetTopViewPositionWhenSliderIsVisible(View.Frame);
+                    },
+                    delegate
+                    {
+                        View.AddGestureRecognizer(_tapToClose);
+                        container.ViewDidAppear(true);
+                    });
+            }
+
         }
 
         /// <summary>
@@ -319,14 +372,37 @@ namespace SlidingPanels.Lib
         {
             container.ViewWillDisappear(true);
 
-            UIView.Animate(AnimationSpeed, 0, UIViewAnimationOptions.CurveEaseInOut,
-                delegate { View.Frame = container.GetTopViewPositionWhenSliderIsHidden(View.Frame); },
-                delegate
-                {
-                    View.RemoveGestureRecognizer(_tapToClose);
-                    container.Hide();
-                    container.ViewDidDisappear(true);
-                });
+            if (OverlappingMainView)
+            {
+                UIView.Animate(AnimationSpeed, 0, UIViewAnimationOptions.CurveEaseInOut,
+                    delegate 
+                    { 
+                        var frame = container.PanelVC.View.Frame;
+                        container.PanelVC.View.Bounds = new CGRect(-frame.Width,frame.Y,frame.Width,frame.Height);
+                        container.PanelVC.View.Frame = new CGRect(-frame.Width,frame.Y,frame.Width,frame.Height);
+                    },
+                    delegate
+                    {
+                        View.RemoveGestureRecognizer(_tapToClose);
+                        if (_maskingView != null) {
+                            _maskingView.RemoveFromSuperview();
+                            _maskingView = null;
+                        }
+                        container.Hide();
+                        container.ViewDidDisappear(true);
+                    });
+            }
+            else
+            {
+                UIView.Animate(AnimationSpeed, 0, UIViewAnimationOptions.CurveEaseInOut,
+                    delegate { View.Frame = container.GetTopViewPositionWhenSliderIsHidden(View.Frame); },
+                    delegate
+                    {
+                        View.RemoveGestureRecognizer(_tapToClose);
+                        container.Hide();
+                        container.ViewDidDisappear(true);
+                    });    
+            }
         }
 
         /// <summary>
