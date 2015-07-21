@@ -23,7 +23,7 @@ Thumbs.db
 .svn
 [Bb]in
 [Dd]ebug*/
-*.lib
+#*.lib
 *.sbr
 obj/
 tozip/

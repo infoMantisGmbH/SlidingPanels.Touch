@@ -40,8 +40,6 @@ namespace SlidingPanels.Lib
         /// </summary>
         private const float AnimationSpeed = 0.25f;
 
-        private UIView _maskingView;
-
         #endregion
 
         #region Data Members
@@ -111,7 +109,8 @@ namespace SlidingPanels.Lib
 			{
 				InteractivePopGestureRecognizer.Enabled = false;
 			}
-
+            PanelMask.View = View;
+            PanelMask.Percent = 65f;
 			ShadowColor = UIColor.Black.CGColor;
 			ShadowOpacity = .75f;
             OverlappingMainView = false;
@@ -325,24 +324,19 @@ namespace SlidingPanels.Lib
 
             if (OverlappingMainView)
             {
+                PanelMask.BringMaskToFront();
                 UIView.Animate(AnimationSpeed, 0, UIViewAnimationOptions.CurveEaseInOut,
                     delegate 
                     { 
                         var frame = container.PanelVC.View.Frame;
+
+                        PanelMask.MaskView(PanelMask.Percent);
+
                         container.PanelVC.View.Frame = new CGRect(0,frame.Y,frame.Width,frame.Height);
+                        container.PanelVC.View.Bounds = new CGRect(0,frame.Y,frame.Width,frame.Height);
                     },
                     delegate
                     {
-                        if (_maskingView == null)
-                        {
-                            var bounds = UIScreen.MainScreen.Bounds;
-                            _maskingView = new UIView(new CGRect(0,container.View.Frame.Y,bounds.Width,bounds.Height));
-                            _maskingView.BackgroundColor = UIColor.FromRGB(0,0,0);
-                            _maskingView.Layer.Opacity = 0.6f;
-                            _maskingView.Tag = -2;
-                        }
-                        // View Abdunkeln
-                        View.AddSubview(_maskingView);
                         View.AddGestureRecognizer(_tapToClose);
                         container.ViewDidAppear(true);
                     });
@@ -377,6 +371,7 @@ namespace SlidingPanels.Lib
                 UIView.Animate(AnimationSpeed, 0, UIViewAnimationOptions.CurveEaseInOut,
                     delegate 
                     { 
+                        PanelMask.MaskView(0);
                         var frame = container.PanelVC.View.Frame;
                         container.PanelVC.View.Bounds = new CGRect(-frame.Width,frame.Y,frame.Width,frame.Height);
                         container.PanelVC.View.Frame = new CGRect(-frame.Width,frame.Y,frame.Width,frame.Height);
@@ -384,10 +379,6 @@ namespace SlidingPanels.Lib
                     delegate
                     {
                         View.RemoveGestureRecognizer(_tapToClose);
-                        if (_maskingView != null) {
-                            _maskingView.RemoveFromSuperview();
-                            _maskingView = null;
-                        }
                         container.Hide();
                         container.ViewDidDisappear(true);
                     });
