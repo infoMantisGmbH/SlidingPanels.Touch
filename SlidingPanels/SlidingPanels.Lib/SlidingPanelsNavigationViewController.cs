@@ -333,7 +333,6 @@ namespace SlidingPanels.Lib
                         PanelMask.MaskView(PanelMask.Percent);
 
                         container.PanelVC.View.Frame = new CGRect(0,frame.Y,frame.Width,frame.Height);
-                        container.PanelVC.View.Bounds = new CGRect(0,frame.Y,frame.Width,frame.Height);
                     },
                     delegate
                     {
@@ -373,7 +372,6 @@ namespace SlidingPanels.Lib
                     { 
                         PanelMask.MaskView(0);
                         var frame = container.PanelVC.View.Frame;
-                        container.PanelVC.View.Bounds = new CGRect(-frame.Width,frame.Y,frame.Width,frame.Height);
                         container.PanelVC.View.Frame = new CGRect(-frame.Width,frame.Y,frame.Width,frame.Height);
                     },
                     delegate
