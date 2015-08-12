@@ -102,18 +102,20 @@ namespace SlidingPanels.Lib
 
 				bool validTouch = false;
 				UIView touchView = touch.View;
+                var castedPanel = CurrentActivePanelContainer as LeftOverlappingPanelContainer;
 
 				while (touchView != null)
 				{
-					if (touchView == contentView)
+                    if (touchView == contentView || (castedPanel != null && !castedPanel.IsPanelVisible()))
 					{
 						validTouch = true;
 						break;
 					}
+
 					touchView = touchView.Superview;
 				}
 
-                if (!validTouch && !(CurrentActivePanelContainer is LeftOverlappingPanelContainer))
+                if (!validTouch)
 				{
 					return false;
 				}

@@ -173,6 +173,13 @@ namespace SlidingPanels.Lib.PanelContainers
             return topViewCurrentFrame;
         }
 
+        public bool IsPanelVisible() 
+        {
+            var size = PanelPosition;
+
+            return PanelVC.View.Frame.X > (-1 * size.Width);
+        }
+
         #endregion
 
         #region Sliding Methods
