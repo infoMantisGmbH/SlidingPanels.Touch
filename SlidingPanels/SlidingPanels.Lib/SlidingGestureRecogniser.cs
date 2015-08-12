@@ -112,7 +112,8 @@ namespace SlidingPanels.Lib
 					}
 					touchView = touchView.Superview;
 				}
-				if (!validTouch)
+
+                if (!validTouch && !(CurrentActivePanelContainer is LeftOverlappingPanelContainer))
 				{
 					return false;
 				}
@@ -218,7 +219,6 @@ namespace SlidingPanels.Lib
                 // NavigationListe verschieben
                 CGRect newFrame = CurrentActivePanelContainer.Sliding (touchPt, CurrentActivePanelContainer.PanelVC.View.Frame);
                 CurrentActivePanelContainer.PanelVC.View.Frame = newFrame;
-
             }
             else
             {
