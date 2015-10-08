@@ -12,6 +12,17 @@ namespace SlidingPanels.Lib.PanelContainers
         /// </summary>
         private static UIView _mask;
 
+		private static bool _shooldAdoptForIOS7
+		{
+			get
+			{
+				// if the iOS version is greater or equal 8.0 an in portrait:
+				return !(UIDevice.CurrentDevice.CheckSystemVersion(8, 0)
+					|| (UIApplication.SharedApplication.StatusBarOrientation != UIInterfaceOrientation.LandscapeLeft
+						&& UIApplication.SharedApplication.StatusBarOrientation != UIInterfaceOrientation.LandscapeRight));
+			}
+		}
+
         public static float Percent 
         { 
             get { return _percent > 0 ? _percent : 70f; }
@@ -43,7 +54,14 @@ namespace SlidingPanels.Lib.PanelContainers
             }
             var navBarHeight = (found) ? viewController.NavigationBar.Bounds.Height : 0f;
             var frame = UIScreen.MainScreen.ApplicationFrame;
-            _mask = new UIView(new CGRect(0, frame.Y + navBarHeight, frame.Width, frame.Height));
+			if (!_shooldAdoptForIOS7)
+			{
+				_mask = new UIView(new CGRect(0, frame.Y + navBarHeight, frame.Width, frame.Height));
+			}
+			else
+			{
+				_mask = new UIView(new CGRect(0, frame.X + navBarHeight, frame.Height, frame.Width));
+			}
             _mask.BackgroundColor = UIColor.FromRGB(0, 0, 0);
             _mask.Layer.Opacity = 0.0f;
             _mask.Layer.ZPosition = -10;

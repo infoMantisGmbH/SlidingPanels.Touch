@@ -49,6 +49,18 @@ namespace SlidingPanels.Lib.PanelContainers
 
         private bool _slidingEnded;
 
+
+		private static bool _shooldAdoptForIOS7
+		{
+			get
+			{
+				// if the iOS version is greater or equal 8.0 an in portrait:
+				return !(UIDevice.CurrentDevice.CheckSystemVersion(8, 0)
+				|| (UIApplication.SharedApplication.StatusBarOrientation != UIInterfaceOrientation.LandscapeLeft
+				&& UIApplication.SharedApplication.StatusBarOrientation != UIInterfaceOrientation.LandscapeRight));
+			}
+		}
+
         private nfloat _navigationBarSize { 
            get 
            {
@@ -63,11 +75,17 @@ namespace SlidingPanels.Lib.PanelContainers
                         rootController = window.RootViewController as UINavigationController;
                         found = rootController != null;
                     }
-                    var height = (found) ? rootController.NavigationBar.Bounds.Height : 0;
 
-                    return height + UIApplication.SharedApplication.StatusBarFrame.Size.Height;
+					nfloat height;
+					if (!_shooldAdoptForIOS7){
+                    	height = (found) ? rootController.NavigationBar.Bounds.Height : 0.0f;
+					} else{
+						height = (found) ? rootController.NavigationBar.Bounds.Height : 0.0f;
+					}
+
+					return height + (!_shooldAdoptForIOS7 ? UIApplication.SharedApplication.StatusBarFrame.Size.Height : UIApplication.SharedApplication.StatusBarFrame.Size.Width);
                 } 
-                catch (Exception e) 
+                catch 
                 {
                     // Per Hand abgemessen. Sollte eigentlich verhindert werden
                     return 62.5f;
@@ -83,13 +101,26 @@ namespace SlidingPanels.Lib.PanelContainers
         {
             get
             {
-                return new CGRect 
-                {
-                    X = -Size.Width,
-                    Y = _navigationBarSize,
-                    Width = Size.Width,
-                    Height = View.Bounds.Height - _navigationBarSize
-                };
+				if (!_shooldAdoptForIOS7)
+				{
+					return new CGRect
+					{
+						X = -Size.Width,
+						Y = _navigationBarSize,
+						Width = Size.Width,
+						Height = View.Bounds.Height - _navigationBarSize
+					};
+				}
+				else
+				{
+					return new CGRect
+					{
+						X = -Size.Height,
+						Y = _navigationBarSize,
+						Width = Size.Height,
+						Height = View.Bounds.Width - _navigationBarSize
+					};
+				}
             }
         }
 
