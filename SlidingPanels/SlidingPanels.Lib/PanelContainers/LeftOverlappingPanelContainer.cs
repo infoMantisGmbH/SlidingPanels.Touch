@@ -22,6 +22,7 @@
 using System;
 using UIKit;
 using CoreGraphics;
+using Foundation;
 
 namespace SlidingPanels.Lib.PanelContainers
 {
@@ -49,7 +50,14 @@ namespace SlidingPanels.Lib.PanelContainers
 
         private bool _slidingEnded;
 
+		/// <summary>
+		/// Observer der Änderung der Orientation des Geräts.
+		/// </summary>
+		private NSObject _orientationDidChangeObserver;
 
+		/// <summary>
+		/// Gibt an, ob die Berechnung der Bildschirmgröße für iOS7 angepasst werden muss.
+		/// </summary>
 		private static bool _shooldAdoptForIOS7
 		{
 			get
@@ -134,7 +142,7 @@ namespace SlidingPanels.Lib.PanelContainers
         /// <param name="panel">Panel.</param>
         public LeftOverlappingPanelContainer (UIViewController panel) : base(panel, PanelType.OverlappingLeftPanel)
         {
-            
+
         }
 
         #endregion
@@ -175,7 +183,31 @@ namespace SlidingPanels.Lib.PanelContainers
             SetFrames();
             _appeared = true;
             _slidingEnded = false;
+
+			// ein Hack für das Registrieren der Orientation des Geräts aus http://stackoverflow.com/a/26283253 (siehe "ViewWillDisappear")
+			// (denn "DidRotate" wird in dieser Klasse nicht aufgerufen, weil es sich nicht um den TopViewController handelt)
+			_orientationDidChangeObserver = NSNotificationCenter.DefaultCenter.AddObserver(UIDevice.OrientationDidChangeNotification,
+				notification =>	PanelMask.RecalculateMaksSize()
+			);
+			UIDevice.CurrentDevice.BeginGeneratingDeviceOrientationNotifications();
         }
+
+		/// <summary>
+		/// Called whenever the Panel is about to become invisible
+		/// </summary>
+		/// <param name="animated">If set to <c>true</c> animated.</param>
+		public override void ViewWillDisappear(bool animated)
+		{
+			base.ViewWillDisappear(animated);
+
+			// ein Hack für das Registrieren der Orientation des Geräts aus http://stackoverflow.com/a/26283253 (siehe "ViewWillAppear")
+			// (denn "DidRotate" wird in dieser Klasse nicht aufgerufen, weil es sich nicht um den TopViewController handelt)
+			UIDevice.CurrentDevice.EndGeneratingDeviceOrientationNotifications();
+			if (_orientationDidChangeObserver != null)
+			{
+				NSNotificationCenter.DefaultCenter.RemoveObserver(_orientationDidChangeObserver);
+			}
+		}
 
         #endregion
 
