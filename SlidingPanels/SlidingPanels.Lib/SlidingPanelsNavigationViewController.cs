@@ -332,7 +332,9 @@ namespace SlidingPanels.Lib
 
                         PanelMask.MaskView(PanelMask.Percent);
 
-                        container.PanelVC.View.Frame = new CGRect(0,frame.Y,frame.Width,frame.Height);
+						// früher wurde hier "new CGRect(0,frame.Y,frame.Width,frame.Height);" zugewiesen,
+						// was zu Problem führte, dass die View auf iPads doppelte Breite hatte
+						container.PanelVC.View.Frame = new CGRect(0,frame.Y,container.View.Frame.Width,frame.Height);
                     },
                     delegate
                     {
