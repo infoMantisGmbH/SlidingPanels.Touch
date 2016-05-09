@@ -363,6 +363,10 @@ namespace SlidingPanels.Lib
         /// <param name="container">Container.</param>
         public void HidePanel(PanelContainer container)
         {
+			if(container == null){
+				return;
+			}
+
             container.ViewWillDisappear(true);
 
             if (OverlappingMainView)
