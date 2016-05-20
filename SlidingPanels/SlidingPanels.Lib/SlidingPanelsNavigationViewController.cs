@@ -205,7 +205,8 @@ namespace SlidingPanels.Lib
         /// </summary>
         /// <param name="toInterfaceOrientation">To interface orientation.</param>
         /// <param name="duration">Duration.</param>
-        public override void WillRotate(UIInterfaceOrientation toInterfaceOrientation, double duration)
+		[Obsolete]
+		public override void WillRotate(UIInterfaceOrientation toInterfaceOrientation, double duration)
         {
             base.WillRotate(toInterfaceOrientation, duration);
             _panelContainers.ForEach(c => c.WillRotate(toInterfaceOrientation, duration));
@@ -216,11 +217,21 @@ namespace SlidingPanels.Lib
         ///     This override forwards the DidRotate callback on to each of the panel containers
         /// </summary>
         /// <param name="fromInterfaceOrientation">From interface orientation.</param>
-        public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
+		[Obsolete]
+		public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
         {
             base.DidRotate(fromInterfaceOrientation);
             _panelContainers.ForEach(c => c.DidRotate(fromInterfaceOrientation));
         }
+
+		public override void ViewWillTransitionToSize(CGSize toSize, IUIViewControllerTransitionCoordinator coordinator)
+		{
+			base.ViewWillTransitionToSize(toSize, coordinator);
+			CGRect shadow = new CGRect(View.Bounds.Location,toSize);
+			shadow.Inflate(new CGSize(3, 3));
+			View.Layer.ShadowPath = UIBezierPath.FromRoundedRect(shadow, 0).CGPath;
+			_panelContainers.ForEach(c => c.ViewWillTransitionToSize(toSize, coordinator));
+		}
 
         #endregion
 
