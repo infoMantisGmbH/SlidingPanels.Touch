@@ -328,7 +328,7 @@ namespace SlidingPanels.Lib
         ///     Shows the panel.
         /// </summary>
         /// <param name="container">Container.</param>
-        public void ShowPanel(PanelContainer container)
+        public virtual void ShowPanel(PanelContainer container)
         {
 			container.ViewWillAppear (true);
 			container.Show ();
@@ -372,7 +372,7 @@ namespace SlidingPanels.Lib
         ///     Hides the panel.
         /// </summary>
         /// <param name="container">Container.</param>
-        public void HidePanel(PanelContainer container)
+        public virtual void HidePanel(PanelContainer container)
         {
 			if(container == null){
 				return;
@@ -413,7 +413,7 @@ namespace SlidingPanels.Lib
         ///     Hides the panel.
         /// </summary>
         /// <param name="panelType">Type of the panel to hide.</param>
-        public void HidePanel(PanelType panelType)
+        public virtual void HidePanel(PanelType panelType)
         {
             PanelContainer container = ExistingContainerForType(panelType);
             if (container != null && container.IsVisible)
