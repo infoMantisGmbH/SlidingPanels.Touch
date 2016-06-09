@@ -30,7 +30,8 @@ namespace SlidingPanels.Lib.PanelContainers
 	{
 		LeftPanel, 
         OverlappingLeftPanel,
-		RightPanel, 
+		RightPanel,
+		OverlappingRightPanel,
 		BottomPanel
 	}
 
