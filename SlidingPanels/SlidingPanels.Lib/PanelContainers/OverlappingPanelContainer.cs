@@ -19,6 +19,8 @@ namespace SlidingPanels.Lib.PanelContainers
 		/// </summary>
 		private nfloat _touchPositionStartXPosition = 0.0f;
 
+		protected UIColor MaskBackgroundColor = null;
+
 		/// <summary>
 		/// Gibt an, ob das Menue aufgeklappt ist.
 		/// </summary>
@@ -224,7 +226,7 @@ namespace SlidingPanels.Lib.PanelContainers
 				}
 			}
 
-			PanelMask.MaskView (percent);
+			PanelMask.MaskView (percent, MaskBackgroundColor);
 
 			return frame;
 		}

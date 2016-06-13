@@ -38,7 +38,7 @@ namespace SlidingPanels.Lib.PanelContainers
         /// <summary>
         /// Erstellt die Maske, wenn diese noch nicht erstellt wurde.
         /// </summary>
-        private static void CheckAndCreateMask()
+		private static void CheckAndCreateMask(UIColor backgroundColor = null)
         {
             if (View == null || _mask != null)
                 return;
@@ -47,7 +47,7 @@ namespace SlidingPanels.Lib.PanelContainers
 
 			RecalculateMaksSize();
 
-            _mask.BackgroundColor = UIColor.FromRGB(0, 0, 0);
+			_mask.BackgroundColor = backgroundColor ?? UIColor.Black;
             _mask.Layer.Opacity = 0.0f;
             _mask.Layer.ZPosition = -10;
 
@@ -84,24 +84,24 @@ namespace SlidingPanels.Lib.PanelContainers
         /// Setzt die Opacity der Maske anhand des übergebenen Prozentwertes.
         /// </summary>
         /// <param name="percent">Percent.</param>
-        public static void MaskView(float percent)
+		public static void MaskView(float percent, UIColor backgroundcolor = null)
         {
             if (View == null)
                 return;
-            CheckAndCreateMask();
-            BringMaskToFront();
+			CheckAndCreateMask(backgroundcolor);
+			BringMaskToFront(backgroundcolor);
             _mask.Layer.Opacity = percent / 100f;
         }
 
         /// <summary>
         /// Brings the mask to front.
         /// </summary>
-        public static void BringMaskToFront()
+		public static void BringMaskToFront(UIColor backgroundcolor = null)
         {
             if (View == null)
                 return;
             
-            CheckAndCreateMask();
+			CheckAndCreateMask (backgroundcolor);
             _mask.Layer.ZPosition = 100;
             View.BringSubviewToFront(_mask);
         }

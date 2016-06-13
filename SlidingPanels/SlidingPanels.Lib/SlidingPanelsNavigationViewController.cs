@@ -94,6 +94,8 @@ namespace SlidingPanels.Lib
 			get { return _panelContainers.FirstOrDefault (p => p.IsVisible); }
 		}
 
+		public UIColor OverlappingMaskColor { get; set; }
+
 		#endregion
 
 		#region Construction/Destruction
@@ -322,7 +324,7 @@ namespace SlidingPanels.Lib
 			container.Show ();
 
 			if (OverlappingMainView) {
-				PanelMask.BringMaskToFront ();
+				PanelMask.BringMaskToFront (OverlappingMaskColor);
 				UIView.Animate (AnimationSpeed, 0, UIViewAnimationOptions.CurveEaseInOut,
 					delegate {
 						var frame = container.PanelVC.View.Frame;

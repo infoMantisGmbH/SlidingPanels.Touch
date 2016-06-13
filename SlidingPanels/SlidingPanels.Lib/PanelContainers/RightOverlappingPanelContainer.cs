@@ -37,7 +37,7 @@ namespace SlidingPanels.Lib.PanelContainers
 		/// <param name="panel">Panel.</param>
 		public RightOverlappingPanelContainer (UIViewController panel) : base (panel, PanelType.OverlappingRightPanel)
 		{
-
+			MaskBackgroundColor = UIColor.Clear;
 		}
 
 		#endregion
