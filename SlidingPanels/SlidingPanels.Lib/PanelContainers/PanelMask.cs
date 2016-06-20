@@ -51,7 +51,9 @@ namespace SlidingPanels.Lib.PanelContainers
             _mask.Layer.Opacity = 0.0f;
             _mask.Layer.ZPosition = -10;
 
-            View.AddSubview(_mask);
+			if(backgroundColor != null){
+				View.AddSubview(_mask);
+			}
         }
 
 		public static void RecalculateMaksSize()
