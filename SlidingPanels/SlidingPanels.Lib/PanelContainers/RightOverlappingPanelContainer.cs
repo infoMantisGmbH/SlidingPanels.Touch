@@ -50,7 +50,9 @@ namespace SlidingPanels.Lib.PanelContainers
 			var bounds = View.Frame; // früher war hier "UIScreen.MainScreen.Bounds" zugewiesen, was bei iPads zu Problem führte, dass das Panel zu breit war
 									 // Wenn schon rausgeschoben, dann den Wert nehmen. Sonst Standard
 			var x = (_slidingEnded || (PanelVC.View.Frame.X != View.Bounds.Width && View.Bounds.Width - Size.Width != PanelPosition.X)) ? PanelVC.View.Frame.X : PanelPosition.X;
-			PanelVC.View.Frame = new CGRect (x, PanelYOffset, bounds.Width, bounds.Height);
+			var height = (bounds.Height + PanelYOffset < bounds.Height) ? bounds.Height + (-1 * PanelYOffset) : bounds.Height - PanelYOffset;
+
+			PanelVC.View.Frame = new CGRect (0, PanelYOffset, bounds.Width, height);
 
 			// View verschieben, da diese sonst unsichtbar über den anderen Views liegt
 			frame.X = x;
