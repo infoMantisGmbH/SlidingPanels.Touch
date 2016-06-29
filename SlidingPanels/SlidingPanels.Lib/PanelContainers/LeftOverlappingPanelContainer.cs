@@ -87,7 +87,7 @@ namespace SlidingPanels.Lib.PanelContainers
 			PanelVC.View.Frame = new CGRect (x, 0, bounds.Width, bounds.Height);
 
 			// View verschieben, da diese sonst unsichtbar über den anderen Views liegt
-			frame.X = x;
+			frame.X = 0;
 			View.Frame = frame;
 		}
     }
