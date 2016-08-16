@@ -70,13 +70,16 @@ namespace SlidingPanels.Lib.PanelContainers
 			var navBarHeight = (found) ? viewController.NavigationBar.Bounds.Height : 0f;
 
 			var frame = UIScreen.MainScreen.ApplicationFrame;
-			if (!_shooldAdoptForIOS7)
+			if (_mask != null)
 			{
-				_mask.Frame = new CGRect(0, frame.Y + navBarHeight, frame.Width, frame.Height);
-			}
-			else
-			{
-				_mask.Frame = new CGRect(0, frame.X + navBarHeight, frame.Height, frame.Width);
+				if (!_shooldAdoptForIOS7)
+				{
+					_mask.Frame = new CGRect(0, frame.Y + navBarHeight, frame.Width, frame.Height);
+				}
+				else
+				{
+					_mask.Frame = new CGRect(0, frame.X + navBarHeight, frame.Height, frame.Width);
+				}
 			}
 
 			View.SizeToFit();
