@@ -171,12 +171,19 @@ namespace SlidingPanels.Lib
 				return;
 			}
 
+			if (touch.View != null && "UIButtonBarButton".Contains(touch.View.Description))
+			{
+				return;
+			}
+
+
 			CurrentActivePanelContainer = _panelContainers.FirstOrDefault (p => p.IsVisible);
 			if (CurrentActivePanelContainer == null) 
 			{
 				CurrentActivePanelContainer = _panelContainers.FirstOrDefault (p => p.CanStartSliding (touchPt, SlidingController.View.Frame));
 				if (CurrentActivePanelContainer != null) 
 				{
+
 					CurrentActivePanelContainer.Show ();
                     SlidingStarted(touchPt);
 				}
@@ -207,14 +214,18 @@ namespace SlidingPanels.Lib
 
 			CGPoint touchPt;
 			UITouch touch = touches.AnyObject as UITouch;
-			if (touch != null) 
-			{
-				touchPt = touch.LocationInView (this.View);
-			}
-			else
+			if (touch == null)
 			{
 				return;
 			}
+			touchPt = touch.LocationInView (this.View);
+
+
+			if (touch.View != null && "UIButtonBarButton".Contains(touch.View.Description))
+			{
+				return;
+			}
+
 
             if (CurrentActivePanelContainer is LeftOverlappingPanelContainer)
             {
@@ -246,11 +257,14 @@ namespace SlidingPanels.Lib
 
 			CGPoint touchPt;
 			UITouch touch = touches.AnyObject as UITouch;
-			if (touch != null) 
+			if (touch == null)
 			{
-				touchPt = touch.LocationInView (this.View);
+				return;
 			}
-			else
+			touchPt = touch.LocationInView (this.View);
+
+
+			if (touch.View != null && "UIButtonBarButton".Contains(touch.View.Description))
 			{
 				return;
 			}
