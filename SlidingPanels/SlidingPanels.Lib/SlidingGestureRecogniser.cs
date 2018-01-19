@@ -171,7 +171,7 @@ namespace SlidingPanels.Lib
 				return;
 			}
 
-			if (touch.View != null && "UIButtonBarButton".Contains(touch.View.Description))
+			if (touch.View.Description.Contains("UIButtonBarButton"))
 			{
 				return;
 			}
@@ -221,7 +221,7 @@ namespace SlidingPanels.Lib
 			touchPt = touch.LocationInView (this.View);
 
 
-			if (touch.View != null && "UIButtonBarButton".Contains(touch.View.Description))
+			if (touch.View != null && touch.View.Description.Contains("UIButtonBarButton"))
 			{
 				return;
 			}
@@ -264,7 +264,7 @@ namespace SlidingPanels.Lib
 			touchPt = touch.LocationInView (this.View);
 
 
-			if (touch.View != null && "UIButtonBarButton".Contains(touch.View.Description))
+			if (touch.View != null && touch.View.Description.Contains("UIButtonBarButton"))
 			{
 				return;
 			}
