@@ -171,7 +171,7 @@ namespace SlidingPanels.Lib
 				return;
 			}
 
-			if (touch.View.Description.Contains("UIButtonBarButton"))
+			if (touch.View != null && touch.View.Description.Contains("UIButtonBarButton"))
 			{
 				return;
 			}
